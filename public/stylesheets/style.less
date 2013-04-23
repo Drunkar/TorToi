@@ -1,0 +1,111 @@
+body {
+  padding: 50px;
+  font: 14px Helvetica, Arial, sans-serif;
+}
+
+// a:link { プロパティ:値; プロパティ:値; …; }
+// a:visited { プロパティ:値; プロパティ:値; …; }
+.toi{
+	width: 100px; height: 10px;
+	background-color: #555;
+	max-width :616px;
+	min-width :116px;
+	max-height:700px;
+	position:absolute;
+	// min-width:100px;
+	.settings{
+		padding: 3px;
+		height:20px;
+		text-align: right;
+		background-color:#333;
+		a.answer{
+			color: #eee;
+			text-decoration: none;
+		}
+		a.remove-button{
+			opacity:0;
+			margin-left:2px;
+			color: #eee;
+			text-decoration: none;
+		}
+
+	}
+	pre.text{
+		color: #eee;
+		font: 12pt "Mona", "ＭＳＰゴシック", Helvetica, Arial, sans-serif;
+		// float: left;
+		text-decoration: none;
+		text-align:left;
+		margin-left:12px;
+		margin-right:4px;
+		min-height: 12px;
+		max-width :600px;
+		min-width :100px;
+	}
+}
+
+#kotaeFrame {
+	// float: left;
+	overflow-x: visible;
+	// max-height: 100%;
+	max-height: 600px;
+	max-width: 1000px;
+	text-align: left;
+	margin-left:18px;
+	overflow-y: scroll;
+	background-color: #eee;
+	.settings{
+		background-color:#ddd;
+		text-align: right;
+		// float: left;
+		a.answer{
+			color: #555;
+		}
+		a.remove-button{
+			color: #555;
+		}
+	}
+	.text{
+		color: #222;
+		margin-left:12px;
+	}
+}
+
+.toi{
+	div.settings:hover{
+		a.remove-button{
+			opacity:1;
+		}
+	}
+}
+.kotae{
+	div.settings:hover{
+		a.remove-button{
+			opacity:1;
+		}
+	}
+}
+textarea{
+	line-height: 1.5em;
+}
+
+span{
+	opacity:0;
+	color: #eee;
+	font: 12pt "Mona", "ＭＳＰゴシック", Helvetica, Arial, sans-serif;
+	// float: left;
+	text-decoration: none;
+	text-align:left;
+	margin-left:12px;
+	margin-right:4px;
+	min-height: 12px;
+	max-width :600px;
+	min-width :100px;
+}
+
+::selection {
+    background: #ffb7b7; /* Safari */
+}
+::-moz-selection {
+    background: #ffb7b7; /* Firefox */
+}
