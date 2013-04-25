@@ -79,26 +79,24 @@
         height: toiData.size.height
       });
       $("#field").append(element);
-      dummy = $("<span  class=\"toi\"/>");
-      dummy.attr("id", id);
-      dummy.append($("<pre class=\"dummy\"/>").append(toiData.text).append("</pre></span>"));
-      $("#field").append(dummy);
-      $("pre.dummy").hide();
       element.css({
         left: toiData.position.left,
         top: toiData.position.top
       });
       element = $("div", "#" + id);
       element.hide().fadeIn();
+      console.log($("#" + id).position.left);
+      console.log($("#" + id).position.top);
       $("#" + id).draggable({
+        containment: '#field',
         handle: $(".settings"),
         stop: function(e, ui) {
           var leftPos, pos, topPos;
 
           console.log(ui.position.left);
           console.log(ui.position.top);
-          console.log(ui.helper.css("left"));
-          console.log(ui.helper.css("top"));
+          console.log($("#" + id).css("left"));
+          console.log($("#" + id).css("top"));
           if (ui.position.left < -72.5) {
             leftPos = -72.5;
           } else {
@@ -140,6 +138,10 @@
         }
       });
       if (flag !== 0) {
+        dummy = $("<span  class=\"toi\"/>");
+        dummy.attr("id", "d" + id);
+        dummy.append($("<pre class=\"dummy\"/>").append(toiData.text).append("</pre></span>"));
+        $("#field").append(dummy);
         text = element.find(".text");
         editTxt(id, id, text, 0);
       }
@@ -181,17 +183,21 @@
                 inputVal = this.defaultValue;
               }
               $(this).parent().removeClass("on").text(inputVal);
-              $("pre", "span", "#" + id).text(inputVal);
+              $("pre", "span", "#d" + id).text(inputVal);
+              console.log($("pre", "span", "#d" + id).text());
+              console.log($("pre", "span", "#d" + id).width());
               $(this).blur();
               if (flag === 0) {
                 target = $("#" + toiId);
-                span = $("pre", "span", "#" + id);
+                span = $("pre", "span", "#d" + id);
+                console.log(span);
+                console.log(span.width());
                 siz = {
-                  width: span.width(),
+                  width: span.width() + 30,
                   height: $("pre", target).height() + 50 + $("#kotaeFrame", target).height()
                 };
                 target.css(siz);
-                span.hide();
+                $("span").remove();
                 socket.emit("update-toi", {
                   _id: id,
                   text: inputVal
@@ -203,12 +209,15 @@
               } else {
                 target = $("#" + id);
                 targetToi = $("#" + toiId);
-                span = $("pre", "span", "#" + id);
-                if (targetToi.width() > (wid = targetToi.width())) {
-
+                span = $("pre", "span", "#d" + id);
+                console.log(span);
+                console.log(span.width());
+                if (targetToi.width() > span.width()) {
+                  wid = targetToi.width();
                 } else {
                   wid = span.width();
                 }
+                $("span").remove();
                 siz = {
                   width: wid - 10,
                   height: $("pre", targetToi).height() + 75 + $("#kotaeFrame", targetToi).height()
@@ -237,13 +246,13 @@
           $("pre", "span", "#" + id).text(inputVal);
           if (flag === 0) {
             target = $("#" + toiId);
-            span = $("pre", "span", "#" + id);
+            span = $("pre", "span", "#d" + id);
             siz = {
               width: span.width(),
               height: $("pre", target).height() + 50 + $("#kotaeFrame", target).height()
             };
             target.css(siz);
-            span.hide();
+            $("span").remove();
             socket.emit("update-toi", {
               _id: id,
               text: inputVal
@@ -255,12 +264,13 @@
           } else {
             target = $("#" + id);
             targetToi = $("#" + toiId);
-            span = $("pre", "span", "#" + id);
+            span = $("pre", "span", "#d" + id);
             if (targetToi.width() > span.width()) {
               wid = targetToi.width();
             } else {
               wid = span.width();
             }
+            $("span").remove();
             siz = {
               width: wid - 10,
               height: $("pre", targetToi).height() + 75 + $("#kotaeFrame", targetToi).height()
@@ -298,12 +308,11 @@
       element = $("<div class=\"kotae\"/>").attr("id", id).append($("<div class=\"settings\"/>").append("<a href=\"#\" class =\"answer\" >返信する</a>").append("<a href=\"#\" class=\"remove-button\">☓</a>")).append($("<div/>").append($("<pre class=\"text\"/>").append(kotaeData.text).append("</pre>")));
       element.hide().fadeIn();
       $("#kotaeFrame", "#" + kotaeData.toi).append(element);
-      dummy = $("<span  class=\"kotae\"/>");
-      dummy.attr("id", id);
-      dummy.append($("<pre class=\"dummy\"/>").append(kotaeData.text).append("</pre></span>"));
-      $("#kotaeFrame", "#" + kotaeData.toi).append(dummy);
-      $("pre.dummy").hide();
       if (flag !== 0) {
+        dummy = $("<span  class=\"kotae\"/>");
+        dummy.attr("id", "d" + id);
+        dummy.append($("<pre class=\"dummy\"/>").append(kotaeData.text).append("</pre></span>"));
+        $("#kotaeFrame", "#" + kotaeData.toi).append(dummy);
         text = element.find(".text");
         editTxt(toiId, id, text, 1);
       }

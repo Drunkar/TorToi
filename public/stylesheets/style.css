@@ -1,10 +1,17 @@
 body {
-  padding: 50px;
   font: 14px Helvetica, Arial, sans-serif;
 }
+#hedder {
+  position: relative;
+}
+#field {
+  text-align: left;
+  top: 0;
+  left: 100px;
+  height: 800px;
+  background-color: #dfd;
+}
 .toi {
-  width: 100px;
-  height: 10px;
   background-color: #555;
   max-width: 616px;
   min-width: 116px;
@@ -81,6 +88,18 @@ span {
   min-height: 12px;
   max-width: 600px;
   min-width: 100px;
+}
+pre {
+  /* Mozilla */
+  white-space: -moz-pre-wrap;
+  /* Opera 4-6 */
+  white-space: -pre-wrap;
+  /* Opera 7 */
+  white-space: -o-pre-wrap;
+  /* CSS3 */
+  white-space: pre-wrap;
+  /* IE 5.5+ */
+  word-wrap: break-word;
 }
 ::selection {
   background: #ffb7b7;
