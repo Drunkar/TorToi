@@ -41,7 +41,12 @@
     });
     socket.on("resize", function(data) {
       console.log(data.size);
-      return $("#" + data._id).animate(data.size);
+      $("#" + data._id).animate(data.size);
+      if ($("#" + data._id + ".kotaeFrame").height() !== 0) {
+        return $("#" + data._id + ".kotaeFrame").css({
+          height: data.size.height - $("#" + data._id + ".title").height() - 50
+        });
+      }
     });
     socket.on("removeToi", function(data) {
       return removeToi(data._id);
@@ -52,8 +57,8 @@
       toiData = {
         text: "タイトル",
         position: {
-          left: 7,
-          top: -7
+          left: 0,
+          top: 150
         },
         size: {
           width: 300,
@@ -72,8 +77,8 @@
       }
       element = $("<div class=\"toi\"/>");
       element.attr("id", id);
-      element.append($("<div class=\"settings\"/>").append("<a href=\"#\" class =\"answer\" >答える</a>").append("<a href=\"#\" class=\"remove-button\">☓</a>")).append($("<div/>").append($("<pre class=\"text\"/>").append(toiData.text).append("</pre>")));
-      element.append($("<div id=\"kotaeFrame\"></div>"));
+      element.append($("<div class=\"settings\"/>").append("<a href=\"#\" class =\"answer\" >答える</a>").append("<a href=\"#\" class=\"remove-button\">☓</a>")).append($("<div/>").append($("<pre class=\"text\" \"title\"/>").append(toiData.text).append("</pre>")));
+      element.append($("<div class=\"kotaeFrame\" id=\"" + id + "\"></div>"));
       element.css({
         width: toiData.size.width,
         height: toiData.size.height
@@ -82,16 +87,13 @@
       element = $("#" + id);
       element.hide().fadeIn();
       element.css({
-        left: 150,
-        top: 150
+        left: toiData.position.left,
+        top: toiData.position.top
       });
-      console.log(element.offset());
       element.draggable({
         stop: function(e, ui) {
           var pos;
 
-          console.log(ui.position.left);
-          console.log(ui.position.top);
           pos = {
             left: ui.position.left,
             top: ui.position.top
@@ -102,26 +104,9 @@
           if (pos.top < 0) {
             pos.top = 0;
           }
-          console.log("-------------");
-          console.log(element.offset());
           return socket.emit("move", {
             _id: id,
             position: pos
-          });
-        }
-      });
-      element.resizable({
-        stop: function(e, ui) {
-          var siz;
-
-          console.log(ui.helper);
-          siz = {
-            width: $("#" + id).width(),
-            height: $("#" + id).height()
-          };
-          return socket.emit("resize", {
-            _id: id,
-            size: siz
           });
         }
       });
@@ -163,7 +148,7 @@
         $("pre > textarea").focus().select();
         empty = /^(\s|　)+$/;
         $("pre > textarea").keypress(function(e) {
-          var inputVal, siz, span, target, targetToi, wid;
+          var h, inputVal, siz, span, target, targetToi, wid;
 
           if (e.keyCode === 13) {
             if (e.shiftKey) {
@@ -174,21 +159,19 @@
                 inputVal = this.defaultValue;
               }
               $(this).parent().removeClass("on").text(inputVal);
-              $("pre", "span", "#d" + id).text(inputVal);
-              console.log($("pre", "span", "#d" + id).text());
-              console.log($("pre", "span", "#d" + id).width());
+              $("span" + "#d" + id).text(inputVal);
               $(this).blur();
               if (flag === 0) {
                 target = $("#" + toiId);
-                span = $("pre", "span", "#d" + id);
-                console.log(span);
-                console.log(span.width());
+                span = $("span" + "#d" + id);
+                h = span.height() + 50 - $("#" + toiId + ".kotaeFrame").height();
                 siz = {
-                  width: span.width() + 30,
-                  height: $("pre", target).height() + 50 + $("#kotaeFrame", target).height()
+                  width: span.width(),
+                  height: h,
+                  "min-height": h
                 };
                 target.css(siz);
-                $("span").remove();
+                span.remove();
                 socket.emit("update-toi", {
                   _id: id,
                   text: inputVal
@@ -200,18 +183,16 @@
               } else {
                 target = $("#" + id);
                 targetToi = $("#" + toiId);
-                span = $("pre", "span", "#d" + id);
-                console.log(span);
-                console.log(span.width());
+                span = $("span" + "#d" + id);
                 if (targetToi.width() > span.width()) {
                   wid = targetToi.width();
                 } else {
                   wid = span.width();
                 }
-                $("span").remove();
+                span.remove();
                 siz = {
                   width: wid - 10,
-                  height: $("pre", targetToi).height() + 75 + $("#kotaeFrame", targetToi).height()
+                  height: $("pre", targetToi).height() + 75 + $(".kotaeFrame", targetToi).height()
                 };
                 targetToi.css(siz);
                 socket.emit("update-kotae", {
@@ -227,20 +208,22 @@
           }
         });
         return $("pre > textarea").blur(function() {
-          var inputVal, siz, span, target, targetToi, wid;
+          var h, inputVal, siz, span, target, targetToi, wid;
 
           inputVal = $(this).val();
           if (inputVal === "" || empty.test(inputVal)) {
             inputVal = this.defaultValue;
           }
           $(this).parent().removeClass("on").text(inputVal);
-          $("pre", "span", "#" + id).text(inputVal);
+          $("span" + "#d" + id).text(inputVal);
           if (flag === 0) {
             target = $("#" + toiId);
-            span = $("pre", "span", "#d" + id);
+            span = $("span" + "#d" + id);
+            h = span.height() + 50 - $("#" + toiId + ".kotaeFrame").height();
             siz = {
               width: span.width(),
-              height: $("pre", target).height() + 50 + $("#kotaeFrame", target).height()
+              height: h,
+              "min-height": h
             };
             target.css(siz);
             $("span").remove();
@@ -255,7 +238,7 @@
           } else {
             target = $("#" + id);
             targetToi = $("#" + toiId);
-            span = $("pre", "span", "#d" + id);
+            span = $("span" + "#d" + id);
             if (targetToi.width() > span.width()) {
               wid = targetToi.width();
             } else {
@@ -264,7 +247,7 @@
             $("span").remove();
             siz = {
               width: wid - 10,
-              height: $("pre", targetToi).height() + 75 + $("#kotaeFrame", targetToi).height()
+              height: $("pre", targetToi).height() + 75 + $(".kotaeFrame", targetToi).height()
             };
             targetToi.css(siz);
             socket.emit("update-kotae", {
@@ -298,12 +281,12 @@
       toiId = kotaeData.toi;
       element = $("<div class=\"kotae\"/>").attr("id", id).append($("<div class=\"settings\"/>").append("<a href=\"#\" class =\"answer\" >返信する</a>").append("<a href=\"#\" class=\"remove-button\">☓</a>")).append($("<div/>").append($("<pre class=\"text\"/>").append(kotaeData.text).append("</pre>")));
       element.hide().fadeIn();
-      $("#kotaeFrame", "#" + kotaeData.toi).append(element);
+      $(".kotaeFrame", "#" + kotaeData.toi).append(element);
       if (flag !== 0) {
         dummy = $("<span  class=\"kotae\"/>");
         dummy.attr("id", "d" + id);
         dummy.append($("<pre class=\"dummy\"/>").append(kotaeData.text).append("</pre></span>"));
-        $("#kotaeFrame", "#" + kotaeData.toi).append(dummy);
+        $("#field").append(dummy);
         text = element.find(".text");
         editTxt(toiId, id, text, 1);
       }

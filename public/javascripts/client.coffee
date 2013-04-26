@@ -55,6 +55,10 @@ jQuery ($) ->
   socket.on "resize", (data) ->
     console.log data.size
     $("#" + data._id).animate data.size
+    # kotaeFrameの大きさも
+    unless $("#"+data._id+".kotaeFrame").height() is 0
+        $("#"+data._id+".kotaeFrame").css
+            height: data.size.height - $("#"+data._id+".title").height()-50
 
   # removeイベントを受信した時、toiを削除する。
   socket.on "removeToi", (data) ->
@@ -66,8 +70,8 @@ jQuery ($) ->
     toiData =
       text: "タイトル"
       position:
-        left: 7
-        top: -7
+        left: 0
+        top: 150
       size:
         width: 300
         height: 230
@@ -86,10 +90,10 @@ jQuery ($) ->
     # htmlを作成し、#fieldに追加
     element = $("<div class=\"toi\"/>")
     element.attr("id", id)
-    element.append($("<div class=\"settings\"/>").append("<a href=\"#\" class =\"answer\" >答える</a>").append("<a href=\"#\" class=\"remove-button\">☓</a>")).append($("<div/>").append($("<pre class=\"text\"/>").append(toiData.text).append("</pre>")))
+    element.append($("<div class=\"settings\"/>").append("<a href=\"#\" class =\"answer\" >答える</a>").append("<a href=\"#\" class=\"remove-button\">☓</a>")).append($("<div/>").append($("<pre class=\"text\" \"title\"/>").append(toiData.text).append("</pre>")))
 
     # kotae用の枠も作成しておく
-    element.append($("<div id=\"kotaeFrame\"></div>"))
+    element.append($("<div class=\"kotaeFrame\" id=\""+id+"\"></div>"))
     element.css
       width: toiData.size.width
       height: toiData.size.height
@@ -109,10 +113,8 @@ jQuery ($) ->
     #   left: toiData.position.left
     #   top: toiData.position.top
     element.css
-      left: 150
-      top: 150
-
-    console.log element.offset()
+      left: toiData.position.left
+      top: toiData.position.top
 
     # ドラッグした時、moveイベントを送る。
     # (jQuery UIを使用)
@@ -120,10 +122,6 @@ jQuery ($) ->
       # containment: '#field'
       # handle:$(".settings")
       stop: (e, ui) ->
-
-        console.log ui.position.left
-        console.log ui.position.top
-
         pos =
           left: ui.position.left
           top: ui.position.top
@@ -133,9 +131,6 @@ jQuery ($) ->
         if pos.top < 0
           pos.top = 0
 
-        console.log "-------------"
-        console.log element.offset()
-
         socket.emit "move",
           _id: id
           position: pos
@@ -143,15 +138,19 @@ jQuery ($) ->
     # resizeのために最小範囲を設定
     # resizeした時、resizeイベントを送る。
     # (jQuery UIを使用)
-    element.resizable stop: (e, ui) ->
-      console.log ui.helper
-      siz =
-        width: $("#" + id).width()
-        height: $("#" + id).height()
+    # toiFrameHeight = 0
+    # element.resizable stop: (e, ui) ->
+    #   siz =
+    #     width: $("#" + id).width()
+    #     height: $("#" + id).height()
 
-      socket.emit "resize",
-        _id: id
-        size: siz
+    #   unless $("#"+id+".kotaeFrame").height() is 0
+    #     $("#"+id+".kotaeFrame").css
+    #         height: $("#"+id+".toi").height() - $("pre.text").height()-50
+
+    #   socket.emit "resize",
+    #     _id: id
+    #     size: siz
 
     element.css
       position: "absolute"
@@ -164,7 +163,6 @@ jQuery ($) ->
       dummy.attr("id", "d"+id)
       dummy.append($("<pre class=\"dummy\"/>").append(toiData.text).append("</pre></span>"))
       $("#field").append dummy
-      # $("span.toi").hide()
 
       # send edit-text event when text is clicked
       text = element.find(".text")
@@ -224,26 +222,24 @@ jQuery ($) ->
 
             # 編集が終わったらtextで置き換える
             $(this).parent().removeClass("on").text inputVal
-            $("pre", "span", "#d"+id).text inputVal
-            console.log $("pre", "span", "#d"+id).text()
-            console.log $("pre", "span", "#d"+id).width()
+            $("span"+"#d"+id).text inputVal
             $(this).blur()
 
             # send update-text event
             if flag is 0
               # $("span", "#d"+id).show()
               target = $("#" + toiId)
-              span = $("pre", "span", "#d"+id)
-              console.log span
-              console.log span.width()
+              span = $("span"+"#d"+id)
 
+              h = span.height()+50-$("#" + toiId+".kotaeFrame").height()
               siz =
-                width: span.width()+30
-                height: $("pre", target).height()+50+$("#kotaeFrame", target).height()
+                width: span.width()
+                height: h
+                "min-height": h
               target.css siz
 
               # widthを取得したらspan要素を削除する
-              $("span").remove()
+              span.remove()
 
               # $("span", "#d"+id).hide()
 
@@ -254,12 +250,10 @@ jQuery ($) ->
                 _id: id
                 size: siz
             else
-              # $("span", "#d"+id).show()
+              # $("span"+"#d"+id).show()
               target = $("#" + id)
               targetToi = $("#" + toiId)
-              span = $("pre", "span", "#d"+id)
-              console.log span
-              console.log span.width()
+              span = $("span"+"#d"+id)
 
               if targetToi.width() > span.width()
                 wid = targetToi.width()
@@ -267,12 +261,12 @@ jQuery ($) ->
                 wid = span.width()
 
               # widthを取得したらspan要素を削除する
-              $("span").remove()
+              span.remove()
               # $("span", "#d"+id).hide()
 
               siz =
                 width: wid-10
-                height: $("pre", targetToi).height()+75+$("#kotaeFrame", targetToi).height()
+                height: $("pre", targetToi).height()+75+$(".kotaeFrame", targetToi).height()
               targetToi.css siz
               socket.emit "update-kotae",
                 _id: id
@@ -290,17 +284,18 @@ jQuery ($) ->
 
         # 編集が終わったらtextで置き換える
         $(this).parent().removeClass("on").text inputVal
-        $("pre", "span", "#"+id).text inputVal
+        $("span"+"#d"+id).text inputVal
 
         # send update-text event
         if flag is 0
           # $("span", "#d"+id).show()
           target = $("#" + toiId)
-          span = $("pre", "span", "#d"+id)
-
+          span = $("span"+"#d"+id)
+          h = span.height()+50-$("#" + toiId+".kotaeFrame").height()
           siz =
             width: span.width()
-            height: $("pre", target).height()+50+$("#kotaeFrame", target).height()
+            height: h
+            "min-height": h
           target.css siz
 
           # widthを取得したらspan要素を削除する
@@ -317,7 +312,7 @@ jQuery ($) ->
           # $("span", "#d"+id).show()
           target = $("#" + id)
           targetToi = $("#" + toiId)
-          span = $("pre", "span", "#d"+id)
+          span = $("span"+"#d"+id)
 
           if targetToi.width() > span.width()
             wid = targetToi.width()
@@ -330,7 +325,7 @@ jQuery ($) ->
 
           siz =
             width: wid-10
-            height: $("pre", targetToi).height()+75+$("#kotaeFrame", targetToi).height()
+            height: $("pre", targetToi).height()+75+$(".kotaeFrame", targetToi).height()
           targetToi.css siz
           socket.emit "update-kotae",
             _id: id
@@ -364,7 +359,7 @@ jQuery ($) ->
     element = $("<div class=\"kotae\"/>").attr("id", id).append($("<div class=\"settings\"/>").append("<a href=\"#\" class =\"answer\" >返信する</a>").append("<a href=\"#\" class=\"remove-button\">☓</a>")).append($("<div/>").append($("<pre class=\"text\"/>").append(kotaeData.text).append("</pre>")))
 
     element.hide().fadeIn()
-    $("#kotaeFrame", "#" + kotaeData.toi).append element
+    $(".kotaeFrame", "#" + kotaeData.toi).append element
 
     # if initialization of items
     # skip adding span
@@ -373,8 +368,7 @@ jQuery ($) ->
       dummy = $("<span  class=\"kotae\"/>")
       dummy.attr("id", "d"+id)
       dummy.append($("<pre class=\"dummy\"/>").append(kotaeData.text).append("</pre></span>"))
-      $("#kotaeFrame", "#" + kotaeData.toi).append dummy
-      # $("pre.dummy").hide()
+      $("#field").append dummy
       # send edit-text event when text is clicked
       text = element.find(".text")
       # edit to initialize

@@ -37,7 +37,7 @@ body {
   max-width: 600px;
   min-width: 100px;
 }
-#kotaeFrame {
+.toi .kotaeFrame {
   overflow-x: visible;
   max-height: 600px;
   max-width: 1000px;
@@ -46,19 +46,26 @@ body {
   overflow-y: scroll;
   background-color: #eee;
 }
-#kotaeFrame .settings {
+.toi .kotaeFrame .settings {
   background-color: #ddd;
   text-align: right;
 }
-#kotaeFrame .settings a.answer {
+.toi .kotaeFrame .settings a.answer {
   color: #555;
 }
-#kotaeFrame .settings a.remove-button {
+.toi .kotaeFrame .settings a.remove-button {
   color: #555;
 }
-#kotaeFrame .text {
+.toi .kotaeFrame .text {
   color: #222;
-  margin-left: 12px;
+}
+.dummy {
+  opacity: 0;
+  background-color: #eee;
+  max-width: 616px;
+  min-width: 116px;
+  max-height: 700px;
+  position: absolute;
 }
 .toi div.settings:hover a.remove-button {
   opacity: 1;
@@ -69,9 +76,7 @@ body {
 textarea {
   line-height: 1.5em;
 }
-span {
-  opacity: 0;
-  color: #eee;
+span pre {
   font: 12pt "Mona", "ＭＳＰゴシック", Helvetica, Arial, sans-serif;
   text-decoration: none;
   text-align: left;
