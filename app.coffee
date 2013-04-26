@@ -21,10 +21,16 @@ app.configure "development", ->
 
 app.get "/", routes.index
 server = http.createServer(app)
+
+# for heroku
+MONGO_URL = process.env.MONGOHQ_URL
+
 mongoose = require("mongoose")
 
 # localhostのtortoiのデータベースに接続。
-db = mongoose.connect("mongodb://localhost/tortoi")
+# db = mongoose.connect("mongodb://localhost/tortoi")
+# for heroku
+db = mongoose.connect(MONGO_URL)
 
 # Create the schemas
 Schema = mongoose.Schema
