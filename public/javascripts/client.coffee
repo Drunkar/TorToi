@@ -66,7 +66,7 @@ jQuery ($) ->
 
   # createボタンが押された時、新規toiを作成するように
   # createToiイベントを送信する。
-  $("#create-button").click ->
+  $("#headerImage").click ->
     toiData =
       text: "タイトル"
       position:

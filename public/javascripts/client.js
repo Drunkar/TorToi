@@ -51,7 +51,7 @@
     socket.on("removeToi", function(data) {
       return removeToi(data._id);
     });
-    $("#create-button").click(function() {
+    $("#headerImage").click(function() {
       var toiData;
 
       toiData = {
