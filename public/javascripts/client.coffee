@@ -70,8 +70,8 @@ jQuery ($) ->
     toiData =
       text: "タイトル"
       position:
-        left: 0
-        top: 150
+        left: 10
+        top: 115
       size:
         width: 300
         height: 230
@@ -130,6 +130,8 @@ jQuery ($) ->
           pos.left = 0
         if pos.top < 0
           pos.top = 0
+        if pos.left < 203 and pos.top < 105
+          pos.top = 105
 
         socket.emit "move",
           _id: id
@@ -177,9 +179,45 @@ jQuery ($) ->
     #「答える」が押された時、そのToiのDBRefを取得するために
     # answerイベントを送信する
     element.find(".answer").click ->
-      kotaeData =
-        text: "ちょ"
-        toiId: id
+      number = Math.floor(Math.random()*10+1)
+      if 0 < number and number < 6
+        kotaeData =
+          text: "ちょ"
+          toiId: id
+      else if 5 < number and number < 10
+        kotaeData =
+          text: "　　　　,.、,､,..,､､.,､,､､..,_　　　　　 　／i\n
+  　　　;'｀;、､:、. .:、:,　:,.: ::｀ﾞ:.:ﾞ:｀''':,'.´ -‐i\n
+  　　　'､;: ...: ,:. :.､.∩.. .:: _;.;;.∩‐'ﾞ ￣ ￣\n
+  　　　　｀\"ﾞ' ''`ﾞ //ﾞ｀´´　　 | |\n
+  　　　　　　　　//Λ＿Λ　 | |\n
+  　　　　　　　　| |（　´Д｀）// ＜うるせぇ、エビフライぶつけんぞ\n
+  　　　　　　　　＼　　　 　 |\n
+  　　　　　　　　　 |　　　／\n
+  　　　　　　　　　/ 　　/\n
+  　　　　 ＿＿　 |　　　|　　＿_\n
+  　　　　 ＼　 ￣￣￣￣￣　　 ＼\n
+  　　　　　||＼　　　　　　　　　　　 ＼\n
+  　　　　　||＼||￣￣￣￣￣￣￣||\n
+  　　　　　||　 ||￣￣￣￣￣￣￣||"
+          toiId: id
+      else
+        kotaeData =
+          text: "　　　　,.、,､,..,､､.,､,､､..,_　　　　　 　／i\n
+  　　　;'｀;、､:、. .:、:,　:,.: ::｀ﾞ:.:ﾞ:｀''':,'.´ -‐i\n
+  　　　'､;: ...: ,:. :.､.∩.. .:: _;.;;.∩‐'ﾞ ￣ ￣\n
+  　　　　｀\"ﾞ' ''`ﾞ //ﾞ｀´´　　 | |\n
+  　　　　　　　　//Λ＿Λ　 | |\n
+  　　　　　　　　| |（　´Д｀）// ＜Shut up, I'll hit you a Ebi furai.\n
+  　　　　　　　　＼　　　 　 |\n
+  　　　　　　　　　 |　　　／\n
+  　　　　　　　　　/ 　　/\n
+  　　　　 ＿＿　 |　　　|　　＿_\n
+  　　　　 ＼　 ￣￣￣￣￣　　 ＼\n
+  　　　　　||＼　　　　　　　　　　　 ＼\n
+  　　　　　||＼||￣￣￣￣￣￣￣||\n
+  　　　　　||　 ||￣￣￣￣￣￣￣||"
+          toiId: id
       socket.emit "createKotae", kotaeData
 
     # ☓ボタンを押した場合removeイベントを送る
@@ -299,7 +337,7 @@ jQuery ($) ->
           target.css siz
 
           # widthを取得したらspan要素を削除する
-          $("span").remove()
+          span.remove()
           # $("span", "#d"+id).hide()
 
           socket.emit "update-toi",
@@ -320,7 +358,7 @@ jQuery ($) ->
             wid = span.width()
 
           # widthを取得したらspan要素を削除する
-          $("span").remove()
+          span.remove()
           # $("span", "#d"+id).hide()
 
           siz =
