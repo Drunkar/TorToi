@@ -1,3 +1,4 @@
+# !!wrapしたテキストを貼り続けるとなんかサイズがおかしくなる？
 jQuery ($) ->
   "use strict"
   socket = io.connect("http://" + location.host + "/")
@@ -65,8 +66,8 @@ jQuery ($) ->
     toiData =
       text: "タイトル"
       position:
-        left: 100
-        top: 150
+        left: 7
+        top: -7
       size:
         width: 300
         height: 230
@@ -94,51 +95,46 @@ jQuery ($) ->
       height: toiData.size.height
     $("#field").append element
 
-    element.css
-      left: toiData.position.left
-      top: toiData.position.top
+    # element.css
+    #   left: toiData.position.left
+    #   top: toiData.position.top
 
-    element = $("div", "#" + id)
+    element = $("#" + id)
     element.hide().fadeIn()
     # element.position
-    #   my: 'right top'
-    #   at: 'right top'
+    #   my: 'left top'
+    #   at: 'left top'
     #   of: document
-    #   offset: String(toiData.position.left)+" "+String(toiData.position.top)
+    # element.offset
+    #   left: toiData.position.left
+    #   top: toiData.position.top
+    element.css
+      left: 150
+      top: 150
 
-    console.log $("#" + id).position.left
-    console.log $("#" + id).position.top
+    console.log element.offset()
+
     # ドラッグした時、moveイベントを送る。
     # (jQuery UIを使用)
-    $("#" + id).draggable
-      containment: '#field'
-      handle:$(".settings")
+    element.draggable
+      # containment: '#field'
+      # handle:$(".settings")
       stop: (e, ui) ->
+
         console.log ui.position.left
         console.log ui.position.top
 
-        # console.log ui.helper.css "left"
-        # console.log ui.helper.css "top"
-
-        console.log $("#" + id).css "left"
-        console.log $("#" + id).css "top"
-
-        if ui.position.left < -72.5
-          leftPos = -72.5
-        else
-          leftPos = ui.position.left
-        if ui.position.left < -185
-          topPos = -185
-        else
-          topPos = ui.position.top
-
         pos =
-          left: leftPos
-          top: topPos
+          left: ui.position.left
+          top: ui.position.top
 
-        # pos =
-        #   left: this.css "left"
-        #   top: this.css "top"
+        if pos.left < 0
+          pos.left = 0
+        if pos.top < 0
+          pos.top = 0
+
+        console.log "-------------"
+        console.log element.offset()
 
         socket.emit "move",
           _id: id
@@ -147,20 +143,18 @@ jQuery ($) ->
     # resizeのために最小範囲を設定
     # resizeした時、resizeイベントを送る。
     # (jQuery UIを使用)
-    $("#" + id).resizable stop: (e, ui) ->
+    element.resizable stop: (e, ui) ->
       console.log ui.helper
       siz =
         width: $("#" + id).width()
         height: $("#" + id).height()
 
-      pos =
-        left: ui.position.left
-        top: ui.position.top
-
-      console.log siz
       socket.emit "resize",
         _id: id
         size: siz
+
+    element.css
+      position: "absolute"
 
     # if initialization of items
     # skip adding span
@@ -303,6 +297,7 @@ jQuery ($) ->
           # $("span", "#d"+id).show()
           target = $("#" + toiId)
           span = $("pre", "span", "#d"+id)
+
           siz =
             width: span.width()
             height: $("pre", target).height()+50+$("#kotaeFrame", target).height()

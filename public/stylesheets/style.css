@@ -1,15 +1,7 @@
 body {
+  margin-left: -7px;
+  margin-top: -6px;
   font: 14px Helvetica, Arial, sans-serif;
-}
-#hedder {
-  position: relative;
-}
-#field {
-  text-align: left;
-  top: 0;
-  left: 100px;
-  height: 800px;
-  background-color: #dfd;
 }
 .toi {
   background-color: #555;

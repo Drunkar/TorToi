@@ -52,8 +52,8 @@
       toiData = {
         text: "タイトル",
         position: {
-          left: 100,
-          top: 150
+          left: 7,
+          top: -7
         },
         size: {
           width: 300,
@@ -79,63 +79,54 @@
         height: toiData.size.height
       });
       $("#field").append(element);
-      element.css({
-        left: toiData.position.left,
-        top: toiData.position.top
-      });
-      element = $("div", "#" + id);
+      element = $("#" + id);
       element.hide().fadeIn();
-      console.log($("#" + id).position.left);
-      console.log($("#" + id).position.top);
-      $("#" + id).draggable({
-        containment: '#field',
-        handle: $(".settings"),
+      element.css({
+        left: 150,
+        top: 150
+      });
+      console.log(element.offset());
+      element.draggable({
         stop: function(e, ui) {
-          var leftPos, pos, topPos;
+          var pos;
 
           console.log(ui.position.left);
           console.log(ui.position.top);
-          console.log($("#" + id).css("left"));
-          console.log($("#" + id).css("top"));
-          if (ui.position.left < -72.5) {
-            leftPos = -72.5;
-          } else {
-            leftPos = ui.position.left;
-          }
-          if (ui.position.left < -185) {
-            topPos = -185;
-          } else {
-            topPos = ui.position.top;
-          }
           pos = {
-            left: leftPos,
-            top: topPos
+            left: ui.position.left,
+            top: ui.position.top
           };
+          if (pos.left < 0) {
+            pos.left = 0;
+          }
+          if (pos.top < 0) {
+            pos.top = 0;
+          }
+          console.log("-------------");
+          console.log(element.offset());
           return socket.emit("move", {
             _id: id,
             position: pos
           });
         }
       });
-      $("#" + id).resizable({
+      element.resizable({
         stop: function(e, ui) {
-          var pos, siz;
+          var siz;
 
           console.log(ui.helper);
           siz = {
             width: $("#" + id).width(),
             height: $("#" + id).height()
           };
-          pos = {
-            left: ui.position.left,
-            top: ui.position.top
-          };
-          console.log(siz);
           return socket.emit("resize", {
             _id: id,
             size: siz
           });
         }
+      });
+      element.css({
+        position: "absolute"
       });
       if (flag !== 0) {
         dummy = $("<span  class=\"toi\"/>");

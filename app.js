@@ -115,7 +115,7 @@
         if (err) {
           return;
         }
-        socket.broadcast.json.emit("createToi", [toi]);
+        socket.broadcast.json.emit("createToiIni", [toi]);
         return socket.emit("createToi", [toi]);
       });
     });
@@ -146,7 +146,7 @@
             return console.log('The raw response from Mongo was ', raw);
           });
         });
-        socket.broadcast.json.emit("createKotae", [kotae]);
+        socket.broadcast.json.emit("createKotaeIni", [kotae]);
         return socket.emit("createKotae", [kotae]);
       });
     });
@@ -171,7 +171,8 @@
         }
         toi.position = data.position;
         toi.save();
-        return socket.broadcast.json.emit("move", data);
+        socket.broadcast.json.emit("move", data);
+        return socket.emit("move", data);
       });
     });
     socket.on("resize", function(data) {

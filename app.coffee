@@ -96,14 +96,6 @@ io.sockets.on "connection", (socket) ->
           # console.log "--------------"
           socket.emit "createKotaeIni", [mutch]
 
-
-
-  # # Kotae.find (err, kotaes) ->
-  #   console.log err  if err
-
-  #   # 接続したユーザにKotaeのデータを送る。
-  #   socket.emit "createKotae", kotaes
-
   # Tsunagari.find (err, tsunagaris) ->
     # console.log err  if err
 
@@ -122,7 +114,7 @@ io.sockets.on "connection", (socket) ->
     # データベースに保存。
     toi.save (err) ->
       return  if err
-      socket.broadcast.json.emit "createToi", [toi]
+      socket.broadcast.json.emit "createToiIni", [toi]
       socket.emit "createToi", [toi]
 
   # createKotaeイベントを受信した時、データベースにkotaeを追加する。
@@ -150,7 +142,7 @@ io.sockets.on "connection", (socket) ->
           console.log('The number of updated documents was %d', numberAffected)
           console.log('The raw response from Mongo was ', raw)
 
-      socket.broadcast.json.emit "createKotae", [kotae]
+      socket.broadcast.json.emit "createKotaeIni", [kotae]
       socket.emit "createKotae", [kotae]
 
 
@@ -180,6 +172,7 @@ io.sockets.on "connection", (socket) ->
 
       # 他のクライアントにイベントを伝えるためにbroadcastで送信する。
       socket.broadcast.json.emit "move", data
+      socket.emit "move", data
 
   # resizeイベントを受信した時、
   # 他のクライアントにイベントを伝えるためにbroadcastで送信する。
