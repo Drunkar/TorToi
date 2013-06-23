@@ -80,6 +80,7 @@ server.listen app.get("port"), ->
 
 # socket.io events to operate db
 io = require("socket.io").listen(server)
+# diappear loadingImage
 io.sockets.on "connection", (socket) ->
   ###############################################################
   # find collections

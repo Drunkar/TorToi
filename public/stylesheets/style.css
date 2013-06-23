@@ -34,6 +34,11 @@ body {
   margin-top: 1px;
   opacity: 0.5;
 }
+#loadingImage {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+}
 .toi {
   background-color: #555;
   max-width: 616px;

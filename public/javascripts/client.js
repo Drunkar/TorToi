@@ -5,6 +5,7 @@
     var createKotae, createToi, editTxt, removeKotae, removeToi, socket;
 
     socket = io.connect("http://" + location.host + "/");
+    $("#loadingImage").fadeOut("fast").queue;
     socket.on("createToiIni", function(toiData) {
       return toiData.forEach(function(data) {
         return createToi(data, 0);
