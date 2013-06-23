@@ -2,7 +2,9 @@
 jQuery ($) ->
   "use strict"
   socket = io.connect("http://" + location.host + "/")
-  $("#loadingImage").fadeOut("fast").queue
+  socket.on "connect", () ->
+    $("#loadingImage").fadeOut("fast").queue
+  
 
   ###############################################################
   # create event
